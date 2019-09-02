@@ -19,6 +19,8 @@ class MicroFrontend extends Component {
     componentDidMount() {
         const { name, host } = this.props;
 
+        console.log({ name, host })
+
         axios.get(`${host}/asset-manifest.json`)
             .then(({ data: { files } }) => {
                 Object.keys(files).map((key) => {
@@ -30,7 +32,7 @@ class MicroFrontend extends Component {
                         script.crossOrigin = '';
                         script.src = `${host}${files[key]}`;
 
-                        let container = document.getElementById("Browse-container")
+                        let container = document.getElementById(`${name}-container`)
                         if (container.childElementCount === 0)
                             script.onload = this.renderMicroFrontend;
 
@@ -46,32 +48,18 @@ class MicroFrontend extends Component {
     }
 
     renderMicroFrontend = () => {
-        const { name, window, history } = this.props;
-        if (window.renderBrowse) {
-            window.renderBrowse(`${name}-container`, history);
+        const { name, history } = this.props;
+
+        console.log({ name, history })
+
+        if (window[`render${name}`]) {
+            window[`render${name}`](`${name}-container`, history);
         }
     };
 
     render() {
-
-        // let { errorOnLoadMicroFrontend } = this.state
-
-        // if (errorOnLoadMicroFrontend == null) {
-        //     return <h3>Carregando...</h3>
-        // }
-
-        // if (errorOnLoadMicroFrontend) {
-        //     return <h3>Houve um erro ao tentar carregar o microfrontend... tente novamente</h3>
-        // }
-
         return <main id={`${this.props.name}-container`} />;
-        // return (<h3>{`${ this.props.name } -container`}</h3>)
     }
 }
-
-MicroFrontend.defaultProps = {
-    document,
-    window,
-};
 
 export default MicroFrontend
